@@ -32,7 +32,7 @@ def filter_defn(defn):
 
     remove_examples = re.compile(
         r"""
-        「[^「]*?―[^「]*?」     # quote (will contain ― to show where to use the word)
+        「[^「]*?―[^「]*?」     # quote (will contain '―'to show where to use the word)
         (?:〈.+?〉)?           # potential quote source
         """, re.VERBOSE
     )

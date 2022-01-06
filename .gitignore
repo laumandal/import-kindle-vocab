@@ -117,5 +117,8 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# last run info
+# outputs from import
 output/last_run
+output/*.csv
+
+*.DS_Store

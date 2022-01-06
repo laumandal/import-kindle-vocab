@@ -65,8 +65,6 @@ def query_to_df(query):
 
     df = pd.read_sql_query(query, conn)
 
-    save_last_run_time_str()
-
     return df
 
 def import_vocab(num_days_history_or_last=None):
