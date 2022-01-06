@@ -7,17 +7,13 @@ import datetime
 kindle_path = Path("/Volumes/Kindle/")
 vocab_db = kindle_path / "system/vocabulary/vocab.db"
 
-def kindle_db_is_available():
+def check_kindle_db_available():
     """check that kindle is connected and db exists where we expect"""
 
-    if kindle_path.is_dir():
-        print("Kindle is connected ✨")
-    else:
+    if kindle_path.is_dir() is False:
         raise FileNotFoundError(f"Mounted kindle not found at {kindle_path}")
 
-    if vocab_db.is_file():
-        print("Vocab database was found 🥰")
-    else:
+    if vocab_db.is_file() is False :
         raise FileNotFoundError(f"Vocab db not found at {vocab_db}")
 
     return True
@@ -47,7 +43,7 @@ def create_query(num_days_history_or_last=None):
             time_filter = ""
         else:
             time_filter = f"and lookup_timestamp > '{last_run_str}' "
-    elif num_days_history_or_last in [int, float]:
+    elif type(num_days_history_or_last) in [int, float]:
         time_filter = (
             f"and lookup_timestamp > date('now', '-{num_days_history_or_last} days')"
         )
@@ -69,4 +65,16 @@ def query_to_df(query):
 
     df = pd.read_sql_query(query, conn)
 
+    save_last_run_time_str()
+
     return df
+
+def import_vocab(num_days_history_or_last=None):
+    print("Starting import...")
+    check_kindle_db_available()
+    print("Kindle is connected ✨, vocab database was found 🥰")
+    query = create_query(num_days_history_or_last=num_days_history_or_last)
+    df = query_to_df(query)
+    print(f"{len(df)} vocab words imported")
+    return df
+
