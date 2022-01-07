@@ -8,7 +8,7 @@ kindle_path = Path("/Volumes/Kindle/")
 vocab_db = kindle_path / "system/vocabulary/vocab.db"
 
 def check_kindle_db_available():
-    """check that kindle is connected and db exists where we expect"""
+    """check kindle is connected and db file is where we expect"""
 
     if kindle_path.is_dir() is False:
         raise FileNotFoundError(f"Mounted kindle not found at {kindle_path}")
@@ -19,6 +19,7 @@ def check_kindle_db_available():
     return True
 
 def get_last_run_time_str():
+    """read the timestamp of the last run time"""
     try:
         with open("output/last_run", mode="r") as f:
             return f.read()
@@ -26,16 +27,18 @@ def get_last_run_time_str():
         return None
 
 def save_last_run_time_str():
+    """write the timestamp of the last run time"""
     with open("output/last_run", mode="w") as f:
         timestamp = str(datetime.datetime.now())
         f.write(timestamp)
 
 def create_query(num_days_history_or_last=None):
     """
+    Return the query, with relevant time period filter. 
     Options for time_filter:
     1. all since last run (since forever if no last_run timestamp)
     2. fixed number of days history
-    3. nothing specified, since forever
+    3. since forever
     """
     if str(num_days_history_or_last).lower() == "last":
         last_run_str = get_last_run_time_str()
@@ -58,6 +61,7 @@ def create_query(num_days_history_or_last=None):
     return query
 
 def query_to_df(query):
+    """Return the result of the query as a df"""
     try:
         conn = sqlite3.connect(vocab_db)
     except Exception as e:
@@ -68,6 +72,7 @@ def query_to_df(query):
     return df
 
 def import_vocab(num_days_history_or_last=None):
+    """Run the full import process"""
     print("Starting import...")
     check_kindle_db_available()
     print("Kindle is connected ✨, vocab database was found 🥰")
