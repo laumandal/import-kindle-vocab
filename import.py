@@ -20,13 +20,15 @@ def import_vocab():
     df['tags'] = '日本語 kindle'
 
     # save file out as CSV
-    df_out = df[['front','reverse','tags']]
+    # TODO: make the columns an argument ('word','title','timestamp' should be optional)
+    df_out = df[['word','front','reverse','tags', 'title', 'lookup_timestamp']]
     output_folder = Path("output/")
     output_file = output_folder / f"kindle_vocab_export_{datetime.now():%Y%m%d_%H%M}.csv"
     df_out.to_csv(
         output_file,
         header=False,
         index=False,
+        encoding='utf-8-sig'
         )
     db.save_last_run_time_str()
     print('all done 🖖')
