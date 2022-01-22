@@ -7,13 +7,16 @@ import fire
 
 
 def import_vocab(
-    highlight_study_word=True, tags="日本語 kindle", csv_encoding="utf-8-sig",
+    highlight_study_word=True,
+    tags="日本語 kindle",
+    csv_encoding="utf-8-sig",
+    num_days_history_or_last="last",
 ):
     """Run the import vocab process and save as a CSV."""
     # import vocab from kindle db
-    df = db.import_vocab(num_days_history_or_last="last")
+    df = db.import_vocab(num_days_history_or_last=num_days_history_or_last)
 
-    if highlight_study_word is true:
+    if highlight_study_word is True:
         df["front"] = df.apply(
             lambda x: format.highlight_lookup_word(x.usage, x.word, x.stem), axis=1
         )
