@@ -1,7 +1,8 @@
-#%% 
+#%%
 import CoreServices.DictionaryServices as ds
 import re
 import pandas as pd
+
 
 def lookup(word):
     """
@@ -9,8 +10,9 @@ def lookup(word):
     Reference function here: 
     https://developer.apple.com/documentation/coreservices/1446842-dcscopytextdefinition?preferredLanguage=occ
     """
-    defn = ds.DCSCopyTextDefinition(None,word,(0,len(word)))
+    defn = ds.DCSCopyTextDefinition(None, word, (0, len(word)))
     return defn
+
 
 def filter_defn(defn):
     """Filter the relevant parts from the results of the query."""
@@ -34,27 +36,26 @@ def filter_defn(defn):
         (?:〈句項目〉.+)?                # potential items related to lookup 
         (?:派生.+)?                     # derivation info
         $
-        """, re.VERBOSE
+        """,
+        re.VERBOSE,
     )
-    defn_reading, defn_meaning = re.search(strip_defn, defn).group(1,2)
+    defn_reading, defn_meaning = re.search(strip_defn, defn).group(1, 2)
 
     # remove usage examples from the definition string
     remove_examples = re.compile(
         r"""
         「[^「]*?―[^「]*?」     # quote (will contain '―'to show where to use the word)
         (?:〈.+?〉)?           # potential quote source
-        """, re.VERBOSE
+        """,
+        re.VERBOSE,
     )
-    defn_meaning = re.sub(
-        remove_examples,
-        "", 
-        defn_meaning
-    )
+    defn_meaning = re.sub(remove_examples, "", defn_meaning)
 
     # replace punctuation in the reading string
-    defn_reading = defn_reading.replace("・","")
+    defn_reading = defn_reading.replace("・", "")
 
     return f"{defn_reading}: {defn_meaning}"
+
 
 def lookup_and_filter(word):
     """return the filtered result of dictionary lookup"""

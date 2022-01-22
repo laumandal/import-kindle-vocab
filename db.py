@@ -7,16 +7,18 @@ import datetime
 kindle_path = Path("/Volumes/Kindle/")
 vocab_db = kindle_path / "system/vocabulary/vocab.db"
 
+
 def check_kindle_db_available():
     """check kindle is connected and db file is where we expect"""
 
     if kindle_path.is_dir() is False:
         raise FileNotFoundError(f"Mounted kindle not found at {kindle_path}")
 
-    if vocab_db.is_file() is False :
+    if vocab_db.is_file() is False:
         raise FileNotFoundError(f"Vocab db not found at {vocab_db}")
 
     return True
+
 
 def get_last_run_time_str():
     """read the timestamp of the last run time"""
@@ -26,11 +28,13 @@ def get_last_run_time_str():
     except:
         return None
 
+
 def save_last_run_time_str():
     """write the timestamp of the last run time"""
     with open("output/last_run", mode="w") as f:
         timestamp = str(datetime.datetime.now())
         f.write(timestamp)
+
 
 def create_query(num_days_history_or_last=None):
     """
@@ -60,6 +64,7 @@ def create_query(num_days_history_or_last=None):
 
     return query
 
+
 def query_to_df(query):
     """Return the result of the query as a df"""
     try:
@@ -70,6 +75,7 @@ def query_to_df(query):
     df = pd.read_sql_query(query, conn)
 
     return df
+
 
 def import_vocab(num_days_history_or_last=None):
     """Run the full import process"""
