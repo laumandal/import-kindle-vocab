@@ -36,28 +36,25 @@ def save_last_run_time_str():
         f.write(timestamp)
 
 
-def create_query(num_days_history_or_last=None):
+def create_query(num_days_history=None):
     """
     Return the query, with relevant time period filter. 
     Options for time_filter:
     1. all since last run (since forever if no last_run timestamp)
     2. fixed number of days history
-    3. since forever
     """
-    if str(num_days_history_or_last).lower() == "last":
+    if num_days_history is None:
         last_run_str = get_last_run_time_str()
         if last_run_str is None:
             time_filter = ""
         else:
             time_filter = f"and lookup_timestamp > '{last_run_str}' "
-    elif type(num_days_history_or_last) in [int, float]:
+    elif type(num_days_history) in [int, float]:
         time_filter = (
-            f"and lookup_timestamp > date('now', '-{num_days_history_or_last} days')"
+            f"and lookup_timestamp > date('now', '-{num_days_history} days')"
         )
-    elif num_days_history_or_last is None:
-        time_filter = ""
     else:
-        raise ValueError("num_days_history_or_last should be number of days, or 'last'")
+        raise ValueError("num_days_history should be a number")
 
     query_path = Path("queries/lookups_query.sql")
     query = open(query_path).read().format(time_filter=time_filter)
@@ -77,12 +74,12 @@ def query_to_df(query):
     return df
 
 
-def import_vocab(num_days_history_or_last=None):
+def import_vocab(num_days_history=None):
     """Run the full import process"""
     print("Starting import...")
     check_kindle_db_available()
     print("Kindle is connected ✨, vocab database was found 🥰")
-    query = create_query(num_days_history_or_last=num_days_history_or_last)
+    query = create_query(num_days_history=num_days_history)
     df = query_to_df(query)
     print(f"{len(df)} vocab words imported")
     return df
