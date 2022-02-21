@@ -1,3 +1,5 @@
+import re
+
 def highlight_lookup_word(quote, word, stem, tag="<b>"):
     """Highlight the study word with an html tag"""
     if not (tag[:1] == "<" and tag[-1:] == ">"):
@@ -17,3 +19,21 @@ def highlight_lookup_word(quote, word, stem, tag="<b>"):
         quote += f"(study word: {tag}{word}{close_tag})"
 
     return quote
+
+def format_title_for_tags(title):
+    strip_publisher = re.compile(
+        r"""
+        ^           
+        (.+?)          # title
+        (\s?\(.+\))    # likely to be publisher name, perhaps with a space first
+        $           
+        """,
+        re.VERBOSE,
+    )
+
+    stripped_title = re.search(strip_publisher, title).group(1)
+
+    # replace any spaces (anki seperates tags with spaces)
+    stripped_title = stripped_title.replace(" ", "-").replace("　", "-") # different whitespace characters
+
+    return stripped_title

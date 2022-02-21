@@ -24,10 +24,10 @@ def import_vocab(
 
         # get definitions from the OSX dictionary for reverse of the cards
         df["reverse"] = df["word"].apply(dict_lookup.lookup_and_filter)
-        df["tags"] = tags
+        df["tags"] = df["title"].apply(format.format_title_for_tags) + " " + tags
 
         # save file out as CSV
-        df_out = df[["word", "front", "reverse", "tags", "title", "lookup_timestamp"]]
+        df_out = df[["word", "front", "reverse", "tags", "lookup_timestamp"]]
         output_folder = Path("output/")
         output_file = (
             output_folder / f"kindle_vocab_export_{datetime.now():%Y%m%d_%H%M}.csv"
