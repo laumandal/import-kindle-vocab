@@ -23,7 +23,7 @@ def check_kindle_db_available():
 def get_last_run_time_str():
     """read the timestamp of the last run time"""
     try:
-        with open("output/last_run", mode="r") as f:
+        with open(Path(__file__).resolve().parent/"output/last_run", mode="r") as f:
             return f.read()
     except:
         return None
@@ -31,7 +31,7 @@ def get_last_run_time_str():
 
 def save_last_run_time_str():
     """write the timestamp of the last run time"""
-    with open("output/last_run", mode="w") as f:
+    with open(Path(__file__).resolve().parent/"output/last_run", mode="w") as f:
         timestamp = str(datetime.datetime.now())
         f.write(timestamp)
 
@@ -46,8 +46,10 @@ def create_query(num_days_history=None):
     if num_days_history is None:
         last_run_str = get_last_run_time_str()
         if last_run_str is None:
+            print("No previous run found 🕵️, importing everything 📶")
             time_filter = ""
         else:
+            print(f"Previous run on {last_run_str} found, importing since then ⌚️")
             time_filter = f"and lookup_timestamp > '{last_run_str}' "
     elif type(num_days_history) in [int, float]:
         time_filter = (
@@ -56,7 +58,7 @@ def create_query(num_days_history=None):
     else:
         raise ValueError("num_days_history should be a number")
 
-    query_path = Path("queries/lookups_query.sql")
+    query_path = Path(__file__).resolve().parent / "queries/lookups_query.sql" # first part is just current folder
     query = open(query_path).read().format(time_filter=time_filter)
 
     return query

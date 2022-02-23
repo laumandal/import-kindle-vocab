@@ -28,7 +28,8 @@ def import_vocab(
 
         # save file out as CSV
         df_out = df[["word", "front", "reverse", "tags", "lookup_timestamp"]]
-        output_folder = Path("output/")
+
+        output_folder = Path(__file__).resolve().parent / "output/" # first part is just current folder
         output_file = (
             output_folder / f"kindle_vocab_export_{datetime.now():%Y%m%d_%H%M}.csv"
         )
